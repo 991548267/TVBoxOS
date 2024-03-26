@@ -1,19 +1,28 @@
-apply plugin: 'com.android.application'
+plugins {
+    id("com.android.application")
+    id("glj.hello.plugin")
+}
+
+def static time() {
+    return new Date().format("yyMMddHHmm", TimeZone.getTimeZone("GMT+08"))
+}
+
+import glj.hello.plugin.*
 
 android {
-    signingConfigs {
-        release {
-        }
-    }
-    compileSdk 33
+
+    compileSdk BuildConfig.compileSdkVersion
 
     defaultConfig {
-        applicationId 'com.github.tvbox.osc'
-        minSdkVersion 18
-        targetSdkVersion 33
-        versionCode 1
-        versionName '1.0.0'
+        applicationId BuildConfig.applicationId
+        minSdkVersion BuildConfig.minSdkVersion
+        targetSdkVersion BuildConfig.compileSdkVersion
+        versionCode BuildConfig.versionCode
+        versionName BuildConfig.versionName
         multiDexEnabled true
+
+        testInstrumentationRunner BuildConfig.testInstrumentationRunner
+
         //设置room的Schema的位置
         javaCompileOptions {
             annotationProcessorOptions {
@@ -22,11 +31,28 @@ android {
         }
     }
 
+    applicationVariants.all { variant ->
+        variant.outputs.all {
+            outputFileName = "${applicationId}-V.${defaultConfig.versionName}-${defaultConfig.versionCode}-${variant.buildType.name}-${time()}.apk"
+        }
+    }
+
     packagingOptions {
         exclude 'META-INF/DEPENDENCIES'
     }
 
     // key store  tvbox  tvbox123.
+    signingConfigs {
+        debug {
+            storeFile file('tvbox.jks')
+            storePassword 'tvbox123.'
+            keyAlias 'tvbox'
+            keyPassword 'tvbox123.'
+
+            v1SigningEnabled true
+            v2SigningEnabled true
+        }
+    }
 
     buildTypes {
         debug {
@@ -45,7 +71,7 @@ android {
             ndk {
                 abiFilters 'armeabi-v7a'
             }
-            signingConfig signingConfigs.release
+            signingConfig signingConfigs.debug
         }
     }
 
@@ -68,7 +94,6 @@ android {
 
 dependencies {
     api fileTree(dir: "libs", include: ['*.jar', '*.aar'])
-
 
     implementation 'org.nanohttpd:nanohttpd:2.3.1'
     implementation 'com.google.zxing:core:3.3.0'
