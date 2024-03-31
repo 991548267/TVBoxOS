@@ -5,10 +5,10 @@ package glj.hello.plugin
  */
 object BuildConfig {
 
-    const val compileSdkVersion = 33
-    const val buildToolsVersion = "33.0.2"
+    const val compileSdkVersion = 34
+    const val buildToolsVersion = "34.0.0"
     const val minSdkVersion = 21
-    const val targetSdkVersion = 33
+    const val targetSdkVersion = 34
 
     const val applicationId = "glj.hello.tv"
     const val testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"

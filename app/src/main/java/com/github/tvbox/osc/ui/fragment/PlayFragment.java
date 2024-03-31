@@ -541,7 +541,7 @@ public class PlayFragment extends BaseLazyFragment {
                         hideTip();
                         if (url.startsWith("data:application/dash+xml;base64,")) {
                             PlayerHelper.updateCfg(mVideoView, mVodPlayerCfg, 2);
-                            App.getInstance().setDashData(url.split("base64,")[1]);
+                            App.getInstance().dashData = url.split("base64,")[1];
                             url = ControlManager.get().getAddress(true) + "dash/proxy.mpd";
                         } else if (url.contains(".mpd") || url.contains("type=mpd")) {
                             PlayerHelper.updateCfg(mVideoView, mVodPlayerCfg, 2);
@@ -703,7 +703,7 @@ public class PlayFragment extends BaseLazyFragment {
 
     public void setData(Bundle bundle) {
 //        mVodInfo = (VodInfo) bundle.getSerializable("VodInfo");
-        mVodInfo = App.getInstance().getVodInfo();
+        mVodInfo = App.getInstance().vodInfo;
         sourceKey = bundle.getString("sourceKey");
         sourceBean = ApiConfig.get().getSource(sourceKey);
         initPlayerCfg();
@@ -814,7 +814,7 @@ public class PlayFragment extends BaseLazyFragment {
         stopParse();
         Thunder.stop(true);//停止磁力下载
         Jianpian.finish();//停止p2p下载
-        App.getInstance().setDashData(null);
+        App.getInstance().dashData = null;
     }
 
     private VodInfo mVodInfo;

@@ -11,8 +11,6 @@ android {
     defaultConfig {
         minSdkVersion BuildConfig.minSdkVersion
         targetSdkVersion BuildConfig.compileSdkVersion
-        versionCode BuildConfig.versionCode
-        versionName BuildConfig.versionName
     }
 
     buildTypes {

@@ -464,7 +464,7 @@ public class DetailActivity extends BaseActivity {
         //   insertVod(sourceKey, vodInfo);
             bundle.putString("sourceKey", sourceKey);
 //            bundle.putSerializable("VodInfo", vodInfo);
-            App.getInstance().setVodInfo(vodInfo);
+            App.getInstance().vodInfo = vodInfo;
             if (showPreview) {
                 if (previewVodInfo == null) {
                     try {
@@ -485,7 +485,7 @@ public class DetailActivity extends BaseActivity {
                     previewVodInfo.playIndex = vodInfo.playIndex;
                     previewVodInfo.seriesMap = vodInfo.seriesMap;
 //                    bundle.putSerializable("VodInfo", previewVodInfo);
-                    App.getInstance().setVodInfo(previewVodInfo);
+                    App.getInstance().vodInfo = previewVodInfo;
                 }
                 playFragment.setData(bundle);
             } else {

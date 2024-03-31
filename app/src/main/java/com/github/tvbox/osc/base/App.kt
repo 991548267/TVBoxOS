@@ -1,113 +1,104 @@
-package com.github.tvbox.osc.base;
+package com.github.tvbox.osc.base
 
-import android.app.Activity;
-import androidx.multidex.MultiDexApplication;
-import com.github.catvod.crawler.JsLoader;
-import com.github.tvbox.osc.bean.VodInfo;
-import com.github.tvbox.osc.callback.EmptyCallback;
-import com.github.tvbox.osc.callback.LoadingCallback;
-import com.github.tvbox.osc.data.AppDataManager;
-import com.github.tvbox.osc.server.ControlManager;
-import com.github.tvbox.osc.util.AppManager;
-import com.github.tvbox.osc.util.EpgUtil;
-import com.github.tvbox.osc.util.FileUtils;
-import com.github.tvbox.osc.util.HawkConfig;
-import com.github.tvbox.osc.util.LOG;
-import com.github.tvbox.osc.util.OkGoHelper;
-import com.github.tvbox.osc.util.PlayerHelper;
-
-import com.kingja.loadsir.core.LoadSir;
-import com.orhanobut.hawk.Hawk;
-import com.p2p.P2PClass;
-import com.whl.quickjs.android.QuickJSLoader;
-import me.jessyan.autosize.AutoSizeConfig;
-import me.jessyan.autosize.unit.Subunits;
+import android.app.Activity
+import androidx.multidex.MultiDexApplication
+import com.github.catvod.crawler.JsLoader
+import com.github.tvbox.osc.bean.VodInfo
+import com.github.tvbox.osc.callback.EmptyCallback
+import com.github.tvbox.osc.callback.LoadingCallback
+import com.github.tvbox.osc.data.AppDataManager
+import com.github.tvbox.osc.server.ControlManager
+import com.github.tvbox.osc.util.AppManager
+import com.github.tvbox.osc.util.CrashHandler
+import com.github.tvbox.osc.util.EpgUtil
+import com.github.tvbox.osc.util.FileUtils
+import com.github.tvbox.osc.util.HawkConfig
+import com.github.tvbox.osc.util.LOG
+import com.github.tvbox.osc.util.OkGoHelper
+import com.github.tvbox.osc.util.PlayerHelper
+import com.kingja.loadsir.core.LoadSir
+import com.orhanobut.hawk.Hawk
+import com.p2p.P2PClass
+import com.whl.quickjs.android.QuickJSLoader
+import me.jessyan.autosize.AutoSizeConfig
+import me.jessyan.autosize.unit.Subunits
 
 /**
  * @author pj567
  * @date :2020/12/17
  * @description:
  */
-public class App extends MultiDexApplication {
-    private static App instance;
-
-    private static P2PClass p;
-    public static String burl;
-    private static String dashData;
-
-    @Override
-    public void onCreate() {
-        super.onCreate();
-        instance = this;
-        initParams();
+class App : MultiDexApplication() {
+    override fun onCreate() {
+        super.onCreate()
+        instance = this
+        initParams()
         // OKGo
-        OkGoHelper.init(); //台标获取
-        EpgUtil.init();
+        OkGoHelper.init() //台标获取
+        EpgUtil.init()
         // 初始化Web服务器
-        ControlManager.init(this);
+        ControlManager.init(this)
         //初始化数据库
-        AppDataManager.init();
+        AppDataManager.init()
         LoadSir.beginBuilder()
-                .addCallback(new EmptyCallback())
-                .addCallback(new LoadingCallback())
-                .commit();
-        AutoSizeConfig.getInstance().setCustomFragment(true).getUnitsManager()
-                .setSupportDP(false)
-                .setSupportSP(false)
-                .setSupportSubunits(Subunits.MM);
-        PlayerHelper.init();
-        QuickJSLoader.init();
-        FileUtils.cleanPlayerCache();
+            .addCallback(EmptyCallback())
+            .addCallback(LoadingCallback())
+            .commit()
+        AutoSizeConfig.getInstance().setCustomFragment(true).unitsManager
+            .setSupportDP(false)
+            .setSupportSP(false)
+            .setSupportSubunits(Subunits.MM)
+        PlayerHelper.init()
+        QuickJSLoader.init()
+        FileUtils.cleanPlayerCache()
+
+        CrashHandler.getInstance(this)
     }
 
-    private void initParams() {
+    private fun initParams() {
         // Hawk
-        Hawk.init(this).build();
-        Hawk.put(HawkConfig.DEBUG_OPEN, false);
+        Hawk.init(this).build()
+        Hawk.put(HawkConfig.DEBUG_OPEN, false)
         if (!Hawk.contains(HawkConfig.PLAY_TYPE)) {
-            Hawk.put(HawkConfig.PLAY_TYPE, 1);
+            Hawk.put(HawkConfig.PLAY_TYPE, 1)
         }
     }
 
-    public static App getInstance() {
-        return instance;
+    override fun onTerminate() {
+        super.onTerminate()
+        JsLoader.load()
     }
 
-    @Override
-    public void onTerminate() {
-        super.onTerminate();
-        JsLoader.load();
-    }
+    @JvmField
+    var vodInfo: VodInfo? = null
+    val currentActivity: Activity
+        get() = AppManager.getInstance().currentActivity()
 
+    @JvmField
+    var dashData: String? = null
 
-    private VodInfo vodInfo;
-    public void setVodInfo(VodInfo vodinfo){
-        this.vodInfo = vodinfo;
-    }
-    public VodInfo getVodInfo(){
-        return this.vodInfo;
-    }
+    companion object {
+        @JvmStatic
+        var instance: App? = null
+            private set
+        private var p: P2PClass? = null
 
-    public static P2PClass getp2p() {
-        try {
-            if (p == null) {
-                p = new P2PClass(instance.getExternalCacheDir().getAbsolutePath());
+        @JvmField
+        var burl: String? = null
+
+        @JvmStatic
+        fun getp2p(): P2PClass? {
+            return try {
+                if (p == null) {
+                    p = P2PClass(
+                        instance!!.externalCacheDir!!.absolutePath
+                    )
+                }
+                p
+            } catch (e: Exception) {
+                LOG.e(e.toString())
+                null
             }
-            return p;
-        } catch (Exception e) {
-            LOG.e(e.toString());
-            return null;
         }
-    }
-
-    public Activity getCurrentActivity() {
-        return AppManager.getInstance().currentActivity();
-    }
-
-    public void setDashData(String data) {
-        dashData = data;
-    }
-    public String getDashData() {
-        return dashData;
     }
 }

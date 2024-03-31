@@ -168,7 +168,7 @@ public class RemoteServer extends NanoHTTPD {
                     EventBus.getDefault().post(new RefreshEvent(RefreshEvent.TYPE_PUSH_URL, url));
                     return NanoHTTPD.newFixedLengthResponse(NanoHTTPD.Response.Status.OK, NanoHTTPD.MIME_PLAINTEXT, "ok");    
                 }  else if (fileName.startsWith("/dash/")) {
-                    String dashData = App.getInstance().getDashData();
+                    String dashData = App.getInstance().dashData;
                     try {
                         String data = new String(Base64.decode(dashData, Base64.DEFAULT | Base64.NO_WRAP), "UTF-8");
                         return NanoHTTPD.newFixedLengthResponse(

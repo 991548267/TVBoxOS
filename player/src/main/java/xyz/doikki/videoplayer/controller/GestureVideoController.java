@@ -168,7 +168,9 @@ public abstract class GestureVideoController extends BaseVideoController impleme
      */
     @Override
     public boolean onDoubleTap(MotionEvent e) {
-        if (mIsDoubleTapTogglePlayEnabled && !isLocked() && isInPlaybackState()) togglePlay();
+        if (mIsDoubleTapTogglePlayEnabled && !isLocked() && isInPlaybackState()) {
+            togglePlay();
+        }
         return true;
     }
 

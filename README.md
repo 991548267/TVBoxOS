@@ -1,0 +1,3 @@
+播放器考虑使用GSYVideoPlayer
+
+代码后续使用kotlin+compose
